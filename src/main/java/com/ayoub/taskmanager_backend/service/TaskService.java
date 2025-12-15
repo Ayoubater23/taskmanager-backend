@@ -3,6 +3,8 @@ package com.ayoub.taskmanager_backend.service;
 import com.ayoub.taskmanager_backend.dto.taskdto.CreateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.dto.taskdto.TaskResponseDTO;
 import com.ayoub.taskmanager_backend.dto.taskdto.UpdateTaskRequestDTO;
+import com.ayoub.taskmanager_backend.exception.AccessDeniedException;
+import com.ayoub.taskmanager_backend.exception.ResourceNotFoundException;
 import com.ayoub.taskmanager_backend.model.Project;
 import com.ayoub.taskmanager_backend.model.Task;
 import com.ayoub.taskmanager_backend.repository.ProjectRepository;
@@ -39,17 +41,17 @@ public class TaskService {
     }
     public void  deleteTask(int taskId,int userId) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(()-> new RuntimeException("task not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("task not found wth ID"+taskId));
         if (task.getProject().getUser().getId() != userId) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         taskRepository.delete(task);
     }
     public TaskResponseDTO markTaskCompleted(int taskId, int userId){
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(()-> new RuntimeException("task not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("task not found wth ID"+taskId));
         if (task.getProject().getUser().getId() != userId) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         task.setCompleted(true);
         Task updatedTask = taskRepository.save(task);
@@ -57,10 +59,10 @@ public class TaskService {
     }
     public TaskResponseDTO updateTask(int taskId, int userId, UpdateTaskRequestDTO dto) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("task not found wth ID"+taskId));
 
         if (task.getProject().getUser().getId() != userId) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         if (dto.title() != null) {
@@ -100,9 +102,9 @@ public class TaskService {
 
 
     public Project getProjectForUser(int projectId, int userId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(()->new RuntimeException("Project not found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(()->new ResourceNotFoundException("Project not found with Id"+projectId));
         if (project.getUser().getId() != userId) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         return project;
     }

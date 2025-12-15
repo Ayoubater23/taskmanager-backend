@@ -1,3 +1,7 @@
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:rVPUleHOXnkiD/3Zcs6hTFWgnnzJAd0HNe7sk+JoDVk=}
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/task_manager_db

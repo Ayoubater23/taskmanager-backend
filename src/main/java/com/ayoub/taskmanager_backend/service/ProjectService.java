@@ -2,6 +2,8 @@ package com.ayoub.taskmanager_backend.service;
 
 import com.ayoub.taskmanager_backend.dto.projectdto.CreateProjectRequestDTO;
 import com.ayoub.taskmanager_backend.dto.projectdto.ProjectResponseDTO;
+import com.ayoub.taskmanager_backend.exception.AccessDeniedException;
+import com.ayoub.taskmanager_backend.exception.ResourceNotFoundException;
 import com.ayoub.taskmanager_backend.model.Project;
 import com.ayoub.taskmanager_backend.model.User;
 import com.ayoub.taskmanager_backend.repository.ProjectRepository;
@@ -27,7 +29,7 @@ public class ProjectService {
     }
     public ProjectResponseDTO createProject(CreateProjectRequestDTO dto, int userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
         Project project = new Project(dto.title(), dto.description(), LocalDateTime.now());
         project.setUser(user);
@@ -37,7 +39,7 @@ public class ProjectService {
     }
 
     public List<ProjectResponseDTO> getAllProjects(int userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         return projectRepository.findByUser(user)
                 .stream()
                 .map(this::mapToProjectResponseDTO)
@@ -45,17 +47,17 @@ public class ProjectService {
     }
     public ProjectResponseDTO getProjectById(int projectId,int userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
         if (project.getUser().getId()!=userId) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         return mapToProjectResponseDTO(project);
     }
     public void deleteProjectById(int projectId,int userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
         if (project.getUser().getId()!=userId) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         projectRepository.deleteById(projectId);
     }
