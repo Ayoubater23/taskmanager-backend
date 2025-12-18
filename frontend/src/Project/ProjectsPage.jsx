@@ -6,6 +6,7 @@ import Toast from './Toast.jsx';
 import { useAuth } from '../Auth/AuthContext.jsx';
 
 const ProjectsPage = () => {
+    const [search, setSearch] = useState('');
     const [projects, setProjects] = useState([]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -15,6 +16,11 @@ const ProjectsPage = () => {
 
     const navigate = useNavigate();
     const { logout } = useAuth();
+
+    const filteredProjects = projects.filter(p =>
+        p.title.toLowerCase().includes(search.toLowerCase())
+    );
+
 
     const loadProjects = async () => {
         const data = await projectService.getAllProjects();
@@ -104,8 +110,17 @@ const ProjectsPage = () => {
                 </button>
             </form>
 
+            <input
+                type="text"
+                placeholder="Search projects..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border px-3 py-2 rounded w-full mb-4"
+            />
+
+
             <ul>
-                {projects.map((p) => (
+                {filteredProjects.map((p) => (
                     <li
                         key={p.id}
                         className="mb-2 p-3 border rounded hover:bg-gray-50 flex justify-between items-center cursor-pointer"

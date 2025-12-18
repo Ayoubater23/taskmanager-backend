@@ -8,7 +8,8 @@ import Toast from './Toast.jsx';
 const ProjectDetailPage = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
-
+    const [taskSearch, setTaskSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [taskTitle, setTaskTitle] = useState('');
@@ -41,6 +42,19 @@ const ProjectDetailPage = () => {
         setToast({ show: true, message });
         setTimeout(() => setToast({ show: false, message: '' }), 2500);
     };
+    const filteredTasks = tasks.filter((t) => {
+        const matchesSearch = t.title
+            .toLowerCase()
+            .includes(taskSearch.toLowerCase());
+
+        const matchesStatus =
+            statusFilter === 'all' ||
+            (statusFilter === 'completed' && t.completed) ||
+            (statusFilter === 'pending' && !t.completed);
+
+        return matchesSearch && matchesStatus;
+    });
+
 
     const handleCreateTask = async (e) => {
         e.preventDefault();
@@ -150,9 +164,29 @@ const ProjectDetailPage = () => {
                     Add Task
                 </button>
             </form>
+            <div className="flex gap-3 mb-4 flex-wrap">
+                <input
+                    type="text"
+                    placeholder="Search tasks..."
+                    value={taskSearch}
+                    onChange={(e) => setTaskSearch(e.target.value)}
+                    className="border px-3 py-2 rounded flex-1"
+                />
+
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="border px-3 py-2 rounded"
+                >
+                    <option value="all">All</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
+
 
             <ul>
-                {tasks.map((t) => (
+                {filteredTasks.map((t) => (
                     <li
                         key={t.id}
                         className="mb-2 p-3 border rounded flex justify-between items-center hover:bg-gray-50 cursor-pointer"
