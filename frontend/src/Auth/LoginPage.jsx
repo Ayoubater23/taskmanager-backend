@@ -57,7 +57,6 @@ const LoginPage = () => {
                     )}
 
                     <div className="space-y-4">
-                        {/* Email Input */}
                         <div>
                             <label htmlFor="email" className="sr-only">Email Address</label>
                             <input
@@ -71,7 +70,6 @@ const LoginPage = () => {
                             />
                         </div>
 
-                        {/* Password Input */}
                         <div>
                             <label htmlFor="password" className="sr-only">Password</label>
                             <input
@@ -86,7 +84,6 @@ const LoginPage = () => {
                         </div>
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg shadow-md transition duration-300 ease-in-out ${

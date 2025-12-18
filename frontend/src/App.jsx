@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './Auth/LoginPage.jsx';
 import RegisterPage from './Auth/RegisterPage.jsx';
-import ProjectsPage from './ProjectsPage.jsx';
+import ProjectsPage from './Project/ProjectsPage.jsx';
+import ProjectDetailPage from './Project/ProjectDetailPage.jsx';
 import { useAuth } from './Auth/AuthContext.jsx';
 
 const ProtectedRoute = ({ children }) => {
@@ -29,7 +30,7 @@ function App() {
                     path="/projects/:projectId"
                     element={
                         <ProtectedRoute>
-                            <ProjectsPage />
+                            <ProjectDetailPage />
                         </ProtectedRoute>
                     }
                 />
