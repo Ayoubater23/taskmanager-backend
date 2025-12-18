@@ -4,10 +4,12 @@ import { projectService } from './ProjectService.jsx';
 import { taskService } from './taskService.jsx';
 import DeleteModal from './DeleteModal.jsx';
 import Toast from './Toast.jsx';
+import EditTaskModal from "./EditTaskModal.jsx";
 
 const ProjectDetailPage = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
+    const [editTask, setEditTask] = useState(null);
     const [taskSearch, setTaskSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [project, setProject] = useState(null);
@@ -214,6 +216,15 @@ const ProjectDetailPage = () => {
                             >
                                 Delete
                             </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditTask(t);
+                                }}
+                                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                            >
+                                Edit
+                            </button>
                         </div>
                     </li>
                 ))}
@@ -226,6 +237,19 @@ const ProjectDetailPage = () => {
                 onConfirm={confirmDeleteTask}
                 itemName={selectedTask?.title}
             />
+            <EditTaskModal
+                task={editTask}
+                onClose={() => setEditTask(null)}
+                onSave={async (updatedTask) => {
+                    await taskService.updateTask(editTask.id, updatedTask);
+                    setEditTask(null);
+                    loadTasks();
+                    setToast({ show: true, message: 'Task updated successfully!' });
+                    setTimeout(() => setToast({ show: false, message: '' }), 2500);
+                }}
+            />
+
+
 
 
             <Toast message={toast.message} show={toast.show} />
